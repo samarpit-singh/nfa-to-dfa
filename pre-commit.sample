@@ -1,0 +1,20 @@
+#!/bin/sh
+
+FILES=$(git diff --cached --name-only --diff-filter=ACMR "*.js" "*.ts")
+
+[ -z "$FILES" ] && exit 0
+
+echo "Linting staged files..."
+
+echo "$FILES" | xargs npx eslint --fix
+
+if [ $? -ne 0 ]; then
+  echo "❌ Lint errors found. Commit canceled."
+  exit 1
+fi
+
+echo "$FILES" | xargs git add
+
+echo "✅ Lint passed. Commit successful."
+
+exit 0
